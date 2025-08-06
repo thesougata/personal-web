@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Happy Birthday BORU</title>
+<style>
+    body {
+        background-color: black;
+        margin: 0;
+        padding: 0;
+        text-align: center;
+        font-family: Arial, sans-serif;
+        color: white;
+        overflow: hidden;
+    }
+
+    /* Heart click stage */
+    #heart {
+        font-size: 100px;
+        cursor: pointer;
+        margin-top: 20%;
+        animation: pulse 1s infinite alternate, glowHeart 2s infinite alternate;
+    }
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        100% { transform: scale(1.2); }
+    }
+    @keyframes glowHeart {
+        0% { text-shadow: 0 0 5px pink, 0 0 10px red; }
+        100% { text-shadow: 0 0 15px hotpink, 0 0 30px red; }
+    }
+
+    #message, #final-message {
+        font-size: 50px;
+        margin-top: 20%;
+        display: none;
+        animation: fadeIn 2s forwards;
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    video, img {
+        max-width: 100%;
+        max-height: 90vh;
+        display: none;
+        margin: auto;
+        border-radius: 10px;
+    }
+
+    /* Slideshow image animation */
+    .slide-animate {
+        animation: fadeZoom 2s forwards;
+        border: 5px solid pink;
+        box-shadow: 0 0 20px pink;
+    }
+    @keyframes fadeZoom {
+        0% { opacity: 0; transform: scale(1.05); }
+        100% { opacity: 1; transform: scale(1); }
+    }
+
+    /* Floating hearts */
+    .falling-heart, .rising-heart {
+        position: absolute;
+        color: red;
+        font-size: 20px;
+        animation: fall 5s linear infinite;
+    }
+    @keyframes fall {
+        0% { transform: translateY(-10vh) rotate(0deg); opacity: 1; }
+        100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+    }
+    @keyframes rise {
+        0% { transform: translateY(110vh) rotate(0deg); opacity: 1; }
+        100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
+    }
+
+    /* Glowing final message */
+    .glow {
+        color: #ff66cc;
+        text-shadow: 0 0 5px #ff66cc, 0 0 15px #ff3399, 0 0 30px #ff0066;
+        animation: glowText 2s infinite alternate, zoomText 5s infinite alternate;
+    }
+    @keyframes glowText {
+        0% { text-shadow: 0 0 10px hotpink, 0 0 20px red; }
+        100% { text-shadow: 0 0 20px pink, 0 0 40px red; }
+    }
+    @keyframes zoomText {
+        0% { transform: scale(1); }
+        100% { transform: scale(1.05); }
+    }
+
+    /* Sparkles */
+    .sparkle {
+        position: absolute;
+        font-size: 10px;
+        color: gold;
+        animation: sparkleFall 3s linear infinite;
+    }
+    @keyframes sparkleFall {
+        0% { opacity: 1; transform: translateY(-10vh); }
+        100% { opacity: 0; transform: translateY(110vh); }
+    }
+</style>
+</head>
+<body>
+
+<!-- Heart click screen -->
+<div id="heart" onclick="startShow()">❤️</div>
+
+<!-- Birthday message -->
+<div id="message">🎉 Happy Birthday BORU 🎉</div>
+
+<!-- Video -->
+<video id="myVideo" src="myvideo.mp4"></video>
+
+<!-- Background music -->
+<audio id="bgMusic" src="bgmusic.mp3"></audio>
+
+<!-- Slideshow image -->
+<img id="slide" src="">
+
+<!-- Final message -->
+<div id="final-message" class="glow">💖 I Love You 💖</div>
+
+<script>
+    const images = [
+        "images/1.jpg",
+        "images/2.jpg",
+        "images/3.jpg",
+        "images/4.jpg",
+        "images/5.jpg",
+        "images/6.jpg"
+    ];
+
+    let slideIndex = 0;
+    let slideInterval;
+
+    function startShow() {
+        document.getElementById("heart").style.display = "none";
+        createFallingHearts();
+        createSparkles();
+
+        document.getElementById("message").style.display = "block";
+
+        setTimeout(() => {
+            document.getElementById("message").style.display = "none";
+            playVideo();
+        }, 3000);
+    }
+
+    function playVideo() {
+        const video = document.getElementById("myVideo");
+        video.style.display = "block";
+        video.play();
+
+        let loveInterval = setInterval(createFloatingLove, 500);
+
+        video.onended = () => {
+            clearInterval(loveInterval);
+            video.style.display = "none";
+            startSlideshow();
+        };
+    }
+
+    function startSlideshow() {
+        document.getElementById("bgMusic").play();
+        const slide = document.getElementById("slide");
+        slide.style.display = "block";
+
+        slide.src = images[slideIndex];
+        slide.className = "slide-animate";
+
+        slideInterval = setInterval(() => {
+            slideIndex++;
+            if (slideIndex >= images.length) {
+                endShow();
+            } else {
+                slide.src = images[slideIndex];
+                slide.className = "slide-animate";
+            }
+        }, 2000);
+    }
+
+    function endShow() {
+        clearInterval(slideInterval);
+        document.getElementById("slide").style.display = "none";
+        createRisingHearts();
+        createSparkles();
+        document.getElementById("final-message").style.display = "block";
+    }
+
+    /* Floating hearts for start/slideshow */
+    function createFallingHearts() {
+        setInterval(() => {
+            let heart = document.createElement("div");
+            heart.className = "falling-heart";
+            heart.innerHTML = "❤️";
+            heart.style.left = Math.random() * 100 + "vw";
+            heart.style.fontSize = Math.random() * 20 + 10 + "px";
+            heart.style.animationDuration = (Math.random() * 3 + 3) + "s";
+            document.body.appendChild(heart);
+            setTimeout(() => heart.remove(), 5000);
+        }, 300);
+    }
+
+    /* Rising hearts for final stage */
+    function createRisingHearts() {
+        setInterval(() => {
+            let heart = document.createElement("div");
+            heart.className = "rising-heart";
+            heart.style.animation = "rise 5s linear";
+            heart.innerHTML = "💖";
+            heart.style.left = Math.random() * 100 + "vw";
+            heart.style.fontSize = Math.random() * 20 + 10 + "px";
+            document.body.appendChild(heart);
+            setTimeout(() => heart.remove(), 5000);
+        }, 300);
+    }
+
+    /* Floating love emojis during video */
+    function createFloatingLove() {
+        const emojis = ["❤️","💖","💕","💞","💓"];
+        let heart = document.createElement("div");
+        heart.className = "falling-heart";
+        heart.innerHTML = emojis[Math.floor(Math.random() * emojis.length)];
+        heart.style.left = Math.random() * 100 + "vw";
+        heart.style.fontSize = Math.random() * 20 + 20 + "px";
+        heart.style.animationDuration = (Math.random() * 3 + 3) + "s";
+        document.body.appendChild(heart);
+        setTimeout(() => heart.remove(), 5000);
+    }
+
+    /* Sparkles everywhere */
+    function createSparkles() {
+        setInterval(() => {
+            let sparkle = document.createElement("div");
+            sparkle.className = "sparkle";
+            sparkle.innerHTML = "✨";
+            sparkle.style.left = Math.random() * 100 + "vw";
+            sparkle.style.fontSize = Math.random() * 15 + 10 + "px";
+            sparkle.style.animationDuration = (Math.random() * 3 + 3) + "s";
+            document.body.appendChild(sparkle);
+            setTimeout(() => sparkle.remove(), 5000);
+        }, 300);
+    }
+</script>
+
+</body>
+</html>
